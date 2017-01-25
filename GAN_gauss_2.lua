@@ -1,8 +1,7 @@
 
   require 'nn'
-  require 'gnuplot'
- require 'nngraph'
- require 'distributions'
+ require 'optim'
+ require 'gnuplot'
 
  ---------------------------------------------------------
  ------------- COMMAND OPTIONS ---------------------------
@@ -104,7 +103,7 @@ end
 --------------TESTING ----------------------
 --------------------------------------------
 
-function Eval_model(iteration)
+function Eval_model(i)
   if(iteration%100==0) then
     output=model_g:forward(z_noise_final)
     gnuplot.hist(output)
@@ -125,8 +124,6 @@ for iteration=1,opt.maxEpoch do
       x_batch_d=Prepare_batch()
       loss_d=0
       loss_g=0
-      Eval_model(iteration)
-      --gnuplot.hist(model_g:forward(z_noise_final))
       for i=1,opt.batch_size do
         model_d:zeroGradParameters()
         -- Forward noise
@@ -148,10 +145,10 @@ for iteration=1,opt.maxEpoch do
 
       end
       table.insert(all_losses,loss_d)
-      --gnuplot.plot('train_d loss',torch.Tensor(all_losses))
+
+
 
     end
-
 
     x_batch=Prepare_batch()
 
@@ -178,10 +175,5 @@ for iteration=1,opt.maxEpoch do
     -- insert generator loss in table
     table.insert(all_losses_g,loss_g)
     -- display generator histogram
-    --gnuplot.hist(model_g:forward(z_noise_final))
 
 end
---gnuplot.hist(model_g:forward(z_noise_final))
---gnuplot.plot('train loss',torch.Tensor(all_losses))
-gnuplot.plot('train loss',torch.Tensor(all_losses_g))
---gnuplot.plot('test',)
